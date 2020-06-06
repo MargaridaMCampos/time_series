@@ -1,0 +1,58 @@
+---
+title: "Report"
+author: "Margaben"
+date: "6/4/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(dplyr)
+load('./data/plots.Rdata')
+
+```
+
+# PM 10 Particles 
+
+## Exploratory
+
+```{r}
+plot_means
+```
+
+```{r}
+plot(daily_metrics$log_data,main = "Log TS")
+```
+
+
+```{r fig.hold = 'hold', out.width = "50%"}
+plot(daily_metrics$acf_log,main = "ACF - Log TS")
+plot(daily_metrics$pacf_log,main = "PACF - Log TS")
+
+```
+
+
+```{r fig.hold = 'hold', out.width = "50%"}
+plot(daily_metrics$acf,main = "ACF")
+plot(daily_metrics$pacf,main = "PACF")
+
+```
+
+```{r}
+plot(daily_metrics$log_decomp, "Log TS Components")
+```
+
+```{r}
+plot(daily_metrics$decomp, "TS Components")
+```
+
+#### Looking at 2014 data:
+```{r fig.hold = 'hold', out.width = "50%"}
+plot(daily_metrics_2014$acf_log)
+plot(daily_metrics_2014$pacf_log)
+```
+
+```{r}
+plot(daily_metrics_2014$decomp, "TS Components")
+```
