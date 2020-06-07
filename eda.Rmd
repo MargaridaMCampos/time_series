@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = FALSE)
 library(ggplot2)
 library(dplyr)
+library(highcharter)
 load('./data/plots.Rdata')
 
 ```
@@ -21,8 +22,36 @@ load('./data/plots.Rdata')
 plot_means
 ```
 
+<!-- # Monthly -->
+
+<!-- ```{r} -->
+<!-- monthly_metrics$raw_plot -->
+
+<!-- plot(monthly_metrics$acf) -->
+<!-- plot(monthly_metrics$pacf) -->
+
+<!-- plot(monthly_metrics$decomp) -->
+
+
+<!-- ``` -->
+
+```{r}
+plot(daily_metrics$ts_data,main = "TS")
+```
+
+
 ```{r}
 plot(daily_metrics$log_data,main = "Log TS")
+```
+
+```{r}
+plot(daily_metrics$box_data,main = "BoxCox TS")
+```
+
+```{r fig.hold = 'hold', out.width = "50%"}
+plot(daily_metrics$acf,main = "ACF")
+plot(daily_metrics$pacf,main = "PACF")
+
 ```
 
 
@@ -34,25 +63,31 @@ plot(daily_metrics$pacf_log,main = "PACF - Log TS")
 
 
 ```{r fig.hold = 'hold', out.width = "50%"}
-plot(daily_metrics$acf,main = "ACF")
-plot(daily_metrics$pacf,main = "PACF")
+plot(daily_metrics$acf_box,main = "ACF - Box")
+plot(daily_metrics$pacf_box,main = "PACF - Box")
 
 ```
-
-```{r}
-plot(daily_metrics$log_decomp, "Log TS Components")
-```
-
+Diff
 ```{r}
 plot(daily_metrics$decomp, "TS Components")
 ```
 
-#### Looking at 2014 data:
-```{r fig.hold = 'hold', out.width = "50%"}
-plot(daily_metrics_2014$acf_log)
-plot(daily_metrics_2014$pacf_log)
+Log
+```{r}
+plot(daily_metrics$log_decomp, "Log TS Components")
+```
+Box
+```{r}
+plot(daily_metrics$box_decomp, "Box TS Components")
 ```
 
-```{r}
-plot(daily_metrics_2014$decomp, "TS Components")
-```
+
+<!-- #### Looking at 2014 data: -->
+<!-- ```{r fig.hold = 'hold', out.width = "50%"} -->
+<!-- hchart(daily_metrics_2014$acf_log) -->
+<!-- hchart(daily_metrics_2014$pacf_log) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- plot(daily_metrics_2014$decomp, "TS Components") -->
+<!-- ``` -->
