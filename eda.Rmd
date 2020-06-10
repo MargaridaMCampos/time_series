@@ -11,6 +11,7 @@ library(ggplot2)
 library(dplyr)
 library(highcharter)
 load('./data/plots.Rdata')
+load('./data/garch_data.RData')
 
 ```
 
@@ -49,24 +50,27 @@ plot(daily_metrics$box_data,main = "BoxCox TS")
 ```
 
 ```{r fig.hold = 'hold', out.width = "50%"}
-plot(daily_metrics$acf,main = "ACF")
-plot(daily_metrics$pacf,main = "PACF")
+hw_grid(hchart(daily_metrics$acf) %>% hc_chart(zoomType = "x"),
+hchart(daily_metrics$pacf) %>% hc_chart(zoomType = "x"),
+ncol = 2)
+
 
 ```
 
 
 ```{r fig.hold = 'hold', out.width = "50%"}
-plot(daily_metrics$acf_log,main = "ACF - Log TS")
-plot(daily_metrics$pacf_log,main = "PACF - Log TS")
+hw_grid(hchart(daily_metrics$acf_log) %>% hc_chart(zoomType = "x"),
+hchart(daily_metrics$pacf_log) %>% hc_chart(zoomType = "x"),
+ncol = 2)
 
 ```
 
 
-```{r fig.hold = 'hold', out.width = "50%"}
-plot(daily_metrics$acf_box,main = "ACF - Box")
-plot(daily_metrics$pacf_box,main = "PACF - Box")
+<!-- ```{r fig.hold = 'hold', out.width = "50%"} -->
+<!-- plot(daily_metrics$acf_box,main = "ACF - Box") -->
+<!-- plot(daily_metrics$pacf_box,main = "PACF - Box") -->
 
-```
+<!-- ``` -->
 Diff
 ```{r}
 plot(daily_metrics$decomp, "TS Components")
@@ -79,6 +83,19 @@ plot(daily_metrics$log_decomp, "Log TS Components")
 Box
 ```{r}
 plot(daily_metrics$box_decomp, "Box TS Components")
+```
+
+
+```{r}
+hw_grid(hchart(acf(ts_ret,plot=FALSE)) %>%
+          hc_chart(zoomType = "x") %>% 
+          hc_yAxis(title = list(text = "ACF"),min = -0.1,max = 1) %>% 
+          hc_xAxis(title = list(text = "Lag")),
+hchart(acf(abs(ts_ret),plot=FALSE)) %>%
+  hc_chart(zoomType = "x")%>% 
+          hc_yAxis(title = list(text = "ACF"),min = -0.1,max = 1) %>% 
+          hc_xAxis(title = list(text = "Lag")),
+ncol = 2)
 ```
 
 
