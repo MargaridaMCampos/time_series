@@ -121,6 +121,8 @@ return(list("raw_plot" = raw_plot,"log_data" = log_data,"acf_log" = acf_log,
 }
 
 daily_metrics<-get_init_eval(train,7)
+daily_metrics_full<-get_init_eval(means %>% 
+                                    distinct("date" = day, "y" = daily_mean),7)
 
 daily_metrics_2014<-get_init_eval(raw_data %>% 
                                     filter(year(as.Date(date)) == 2014),
@@ -264,6 +266,30 @@ auto_log_2 %>% plot()
 
 predictions_1<-predict(sarima_6,n.ahead = 3)
 predictions_2<-forecast(sarima_6,h=21)
+
+sarima_full<-Arima(daily_metrics_full$log_data,order = c(2,0,1),seasonal = c(2,0,0))
+checkresiduals(sarima_full)
+sarima_full %>% plot()
+sarima_full %>% summary()
+
+forecast_5<-forecast(sarima_full,h=5)
+
+forecast_df<-data.frame("mean_pred" = forecast_5$mean,
+                        "lower_95" = forecast_5$lower %>% as.data.frame() %>% .$`95%`,
+                        "upper_95" = forecast_5$upper %>% as.data.frame() %>% .$`95%`) %>% 
+  mutate(exp = exp(as.numeric(mean_pred)))
+                        
+
+highchart() %>% 
+  hc_chart(type = "arearange") %>%
+  hc_xAxis(categories = c("T+1","T+2","T+3","T+4","T+5")) %>% 
+  hc_yAxis(title = list(text = "Predicted Log PM10 (μg/m3)"))%>% 
+  hc_add_series(data = forecast_df %>% 
+  select(lower_95,upper_95) %>% list_parse2()) %>% 
+  hc_add_series(forecast_df$mean_pred %>% as.numeric(),type = "line")
+
+plot(predictions_2, X = 50)
+
 log(test$y)
 
 highchart() %>% 
@@ -274,9 +300,11 @@ highchart() %>%
   hc_add_series(data.frame("date" = test$date,"y" = predictions_1$pred %>% as.numeric()),
                 "line",hcaes(x = date,y = y), name = "SARIMA Predictions")
 
-plot(forecast(sarima_6,h=21),include = 50)
+plot(forecast(sarima_6,h=21),include =400)
 qnorm(sarima_6$residuals)
 qqline(sarima_6$residuals)
+
+
 
 
 data.frame("x" = means %>% distinct(day) %>% head(-6) %>% .$day ,

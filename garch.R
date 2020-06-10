@@ -3,6 +3,8 @@ library(rugarch)
 library(tidyverse)
 library(PerformanceAnalytics)
 library(skewt)
+library(xtable)
+library(kableExtra)
 data_garch<-read.csv("~/MECD-1/2S/Series_Temporais/Project/data/2015-2019 Nasdaq.txt", stringsAsFactors=FALSE)
 
 log_return<-data_garch %>% 
@@ -77,6 +79,12 @@ newsimpact_aparch<-newsimpact(aparch_fit)
 
 plot(newsimpact_aparch$zx,newsimpact_aparch$zy,xlab=  "Pred Error", ylab = "Pred Var")
 
+highchart() %>% 
+  hc_yAxis(title = list(text = "Prediction Variance")) %>%
+  hc_xAxis(title = list(text = "Prediction Error")) %>%
+  hc_add_series(data = data.frame("x" = newsimpact_aparch$zx,"y" = newsimpact_aparch$zy))
+
+
 arma_garch_spec<- ugarchspec(mean.model = list(armaOrder = c(1,1)),
                              variance.model = list(model = "sGARCH"),
                              distribution.model = "sstd")
@@ -128,4 +136,8 @@ cbind(infocriteria(arch_fit) %>%
           Box.test(arma_garch_fit %>% residuals(standardize=TRUE),22,"Ljung-Box")['p.value']%>% as.numeric,
           Box.test(aparch_fit %>% residuals(standardize=TRUE),22,"Ljung-Box")['p.value']%>% as.numeric))) %>% View()
 
-save(ts_ret,file = "./data/garch_data.RData")
+plot_time_series(fitted(aparch_fit))
+
+save(ts_ret,
+     aparch_fit,
+     file = "./data/garch_data.RData")
